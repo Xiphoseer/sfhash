@@ -29,10 +29,12 @@
 //! The hash value is initialized with the lenght of the input, so
 //! the algorithm cannot be used incrementally.
 
+use core::num::Wrapping;
+
 /// Calculate the Hash of a byte slice
 pub fn digest(mut data: &[u8]) -> u32 {
     let len: u32 = data.len() as u32;
-    let mut hash: u32 = len;
+    let mut hash: Wrapping<u32> = Wrapping(len);
 
     if len == 0 {
         return 0;
@@ -43,8 +45,8 @@ pub fn digest(mut data: &[u8]) -> u32 {
 
     /* Main loop */
     for _i in 0..block_count {
-        hash += u16::from_le_bytes([data[0], data[1]]) as u32;
-        let temp = (u16::from_le_bytes([data[2], data[3]]) as u32) << 11 ^ hash;
+        hash += Wrapping(u16::from_le_bytes([data[0], data[1]]) as u32);
+        let temp = Wrapping(u16::from_le_bytes([data[2], data[3]]) as u32) << 11 ^ hash;
         hash = hash << 16 ^ temp;
         data = &data[4..];
         hash += hash >> 11;
@@ -56,19 +58,19 @@ pub fn digest(mut data: &[u8]) -> u32 {
             // Do nothing
         }
         1 => {
-            hash += data[0] as u32;
+            hash += Wrapping(data[0] as u32);
             hash ^= hash << 10;
             hash += hash >> 1;
         },
         2 => {
-            hash += u16::from_le_bytes([data[0], data[1]]) as u32;
+            hash += Wrapping(u16::from_le_bytes([data[0], data[1]]) as u32);
             hash ^= hash << 11;
             hash += hash >> 17;
         },
         3 => {
-            hash += u16::from_le_bytes([data[0], data[1]]) as u32;
+            hash += Wrapping(u16::from_le_bytes([data[0], data[1]]) as u32);
             hash ^= hash << 16;
-            hash ^= (data[2] as u32) << 18;
+            hash ^= Wrapping(data[2] as u32) << 18;
             hash += hash >> 11;
         },
         _ => {
@@ -84,7 +86,7 @@ pub fn digest(mut data: &[u8]) -> u32 {
     hash ^= hash << 25;
     hash += hash >> 6;
 
-    return hash;
+    return hash.0;
 }
 
 #[cfg(test)]
@@ -96,5 +98,6 @@ mod hiesh_tests {
         assert_eq!(digest("Hello World!".as_bytes()), 1774740540);
         assert_eq!(digest("Hsieh Hash".as_bytes()), 1552477933);
         assert_eq!(digest("SuperFastHash".as_bytes()), 2245601745);
+        assert_eq!(digest("pirateDay".as_bytes()), 2774317235);
     }
 }
