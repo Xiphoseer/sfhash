@@ -61,18 +61,18 @@ pub fn digest(mut data: &[u8]) -> u32 {
             hash += Wrapping(data[0] as u32);
             hash ^= hash << 10;
             hash += hash >> 1;
-        },
+        }
         2 => {
             hash += Wrapping(u16::from_le_bytes([data[0], data[1]]) as u32);
             hash ^= hash << 11;
             hash += hash >> 17;
-        },
+        }
         3 => {
             hash += Wrapping(u16::from_le_bytes([data[0], data[1]]) as u32);
             hash ^= hash << 16;
             hash ^= Wrapping(data[2] as u32) << 18;
             hash += hash >> 11;
-        },
+        }
         _ => {
             panic!("Please investigate");
         }
