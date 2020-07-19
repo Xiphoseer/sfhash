@@ -86,7 +86,7 @@ pub fn digest(mut data: &[u8]) -> u32 {
     hash ^= hash << 25;
     hash += hash >> 6;
 
-    return hash.0;
+    hash.0
 }
 
 #[cfg(test)]
@@ -95,9 +95,9 @@ mod hiesh_tests {
 
     #[test]
     fn test_digest() {
-        assert_eq!(digest("Hello World!".as_bytes()), 1774740540);
-        assert_eq!(digest("Hsieh Hash".as_bytes()), 1552477933);
-        assert_eq!(digest("SuperFastHash".as_bytes()), 2245601745);
-        assert_eq!(digest("pirateDay".as_bytes()), 2774317235);
+        assert_eq!(digest(b"Hello World!"), 1774740540);
+        assert_eq!(digest(b"Hsieh Hash"), 1552477933);
+        assert_eq!(digest(b"SuperFastHash"), 2245601745);
+        assert_eq!(digest(b"pirateDay"), 2774317235);
     }
 }
