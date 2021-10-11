@@ -1,12 +1,10 @@
 [package]
-name = "hsieh-hash"
+name = "sfhash"
 version = "0.1.1"
-authors = ["Paul Hsieh", "Xiphoseer"]
 edition = "2018"
 license = "LGPL-2.1"
 description = "The `Hsieh Hash` or `SuperFastHash` function"
-homepage = "https://crates.io/crates/hsieh-hash"
-repository = "https://github.com/xiphoseer/rust-hsieh-hash"
+repository = "https://github.com/xiphoseer/sfhash"
 readme = "README.md"
 
 [dependencies]

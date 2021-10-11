@@ -16,11 +16,11 @@
 // License along with this library; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-//! This crate contains the `Hsieh Hash` or `SuperFastHash` function
-//! created by Paul Hsieh and presented at <http://www.azillionmonkeys.com/qed/hash.html>
+//! This crate contains the `SuperFastHash` (aka `Hsieh Hash`) function
+//! presented at <http://www.azillionmonkeys.com/qed/hash.html>
 //!
 //! ```rust
-//! use hsieh_hash::digest;
+//! use sfhash::digest;
 //!
 //! let hash = digest("Hello World!".as_bytes());
 //! assert_eq!(hash, 1774740540);
@@ -40,11 +40,8 @@ pub fn digest(mut data: &[u8]) -> u32 {
         return 0;
     }
 
-    let remainder = len & 3;
-    let block_count = len >> 2;
-
     /* Main loop */
-    for _i in 0..block_count {
+    for _i in 0..(len >> 2) {
         hash += Wrapping(u16::from_le_bytes([data[0], data[1]]) as u32);
         let temp = Wrapping(u16::from_le_bytes([data[2], data[3]]) as u32) << 11 ^ hash;
         hash = hash << 16 ^ temp;
@@ -53,7 +50,7 @@ pub fn digest(mut data: &[u8]) -> u32 {
     }
 
     /* Handle end cases */
-    match remainder {
+    match len & 3 {
         0 => {
             // Do nothing
         }
@@ -73,9 +70,7 @@ pub fn digest(mut data: &[u8]) -> u32 {
             hash ^= Wrapping(data[2] as u32) << 18;
             hash += hash >> 11;
         }
-        _ => {
-            panic!("Please investigate");
-        }
+        _ => unreachable!(),
     }
 
     /* Force "avalanching" of final 127 bits */

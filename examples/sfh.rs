@@ -1,4 +1,4 @@
-use hsieh_hash::digest;
+use sfhash::digest;
 use std::env;
 
 fn main() {
